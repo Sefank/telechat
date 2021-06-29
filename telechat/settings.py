@@ -9,8 +9,8 @@ class BaseConfig:
     # 程序密钥
     SECRET_KEY = os.getenv('SECRET_KEY', 'secret key')
 
-    # 数据库更新通知 Flask-SQLAlchemy 2.1 后默认为 False
-    # SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # 取消数据库更新通知 Flask-SQLAlchemy
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class DevelopmentConfig(BaseConfig):
