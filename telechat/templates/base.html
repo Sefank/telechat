@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    {% block head %}{# 头部块 #}
+        {# 编码 utf-8 #}
+        <meta charset="UTF-8">
+        {# 移动设备视口调整 #}
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {# title 标题块，page_title 页面标题块（自动添加“ - TeleChat”）  #}
+        <title>{% block title %}{% block page_title %}聊天室{% endblock %} - TeleChat{% endblock %}</title>
+        {# 页面图标 #}
+        <link rel="icon" href="{{ url_for('static', filename='logo.png') }}">
+        {# 自定义 CSS #}
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        {# semantic-ui CSS 库 #}
+        <link rel="stylesheet" href="{{ url_for('static', filename='semantic-ui/semantic.min.css') }}">
+    {% endblock %}
+</head>
+<body>
+
+{# 侧边栏 #}
+<div class="ui labeled icon right vertical inverted demo menu sidebar">
+    <a href="{{ url_for('chat.home') }}" class="item">
+        <i class="home icon"></i>
+        首页
+    </a>
+    <a href="https://github.com/Sefank/telechat" class="item">
+        <i class="github icon"></i>
+        本程序代码仓库
+    </a>
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('chat.profile') }}" class="item">
+            <i class="setting icon"></i>
+            个人资料设置
+        </a>
+        <a href="{{ url_for('auth.logout') }}" class="item">
+            <i class="power off icon"></i>
+            登出
+        </a>
+    {% endif %}
+</div>
+
+{# 导航栏 #}
+{% block nav %}
+    <div class="ui top fixed borderless menu">
+        <a href="{{ url_for('chat.home') }}" class="item telechat">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="TeleChat 图标">
+            TeleChat
+        </a>
+        <div class="item">
+            <div class="ui label black basic" title="在线用户数">
+                <i class="user icon"></i>
+                <span id="user-count">0</span> / {{ user_amount }}
+            </div>
+        </div>
+        <div class="right menu hide-on-mobile">
+            {% if not current_user.is_authenticated %}
+                <div class="item">
+                    <a href="{{ url_for('auth.login') }}" class="ui primary button">
+                        登入
+                    </a>
+                </div>
+            {% endif %}
+            <a id="toggle-sidebar" class="item">
+                <i class="sidebar icon"></i>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+{# 移动端消息发送模态框 #}
+<div id="mobile-new-message-modal" class="ui modal small">
+    <div class="content">
+        <div class="ui form">
+            <textarea id="mobile-message-textarea" rows="15" placeholder="请在此输入需要发送的消息……"></textarea>
+        </div>
+    </div>
+    <div class="actions">
+        <button class="ui button cancel">取消</button>
+        <button id="send-button" class="ui button orange approve">发送</button>
+    </div>
+</div>
+
+{# 主体内容 #}
+{% block content %}{% endblock %}
+
+{# JS 代码加载 #}
+{% block scripts %}
+    <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='semantic-ui/semantic.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='forms.js') }}"></script>
+    <script src="{{ url_for('static', filename='mics.js') }}"></script>
+    {{ moment.include_moment(local_js=url_for('static', filename='moment-with-locales.min.js')) }}
+    <script type="text/javascript">
+        var csrf_token = "{{ csrf_token() }}";  {# CSRF 令牌写入 #}
+    </script>
+{% endblock %}
+
+</body>
+</html>

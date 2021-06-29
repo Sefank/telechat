@@ -1,7 +1,7 @@
 import os
 
 import click
-from flask import Flask
+from flask import Flask, render_template
 from flask_wtf.csrf import CSRFError
 
 from telechat.extensions import db, login_manager, csrf, moment
@@ -34,19 +34,19 @@ def register_errors(app: Flask):
 
     @app.errorhandler(400)  # Bad Request 客户端请求的语法错误，服务器无法理解
     def bad_request(e):
-        pass
+        return render_template('error.html', description=e.description, code=e.code), 400
 
     @app.errorhandler(404)  # Not Found 服务器无法根据客户端的请求找到资源（网页）
     def page_not_found(e):
-        pass
+        return render_template('error.html', description=e.description, code=e.code), 404
 
     @app.errorhandler(500)  # Internal Server Error	服务器内部错误，无法完成请求
     def internal_server_error(e):
-        pass
+        return render_template('error.html', description="服务器内部错误，无法完成请求！", code="500"), 500
 
     @app.errorhandler(CSRFError)  # CSRF 验证失败
     def csrf_error_handle(e):
-        pass
+        return render_template('error.html', description=e.description, code=e.code), 400
 
 
 def register_commands(app: Flask):
